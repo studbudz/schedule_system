@@ -26,7 +26,6 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.7, initialPage: 2);
     _pageController.addListener(() {
       setState(() {
         currentPage = _pageController.page!;
@@ -34,23 +33,59 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
     });
   }
 
+  void nextPage() {
+    _pageController.nextPage(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void previousPage() {
+    _pageController.previousPage(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueAccent,
-      body: Center(
-        child: PageView.builder(
-          controller: _pageController,
-          itemCount: 10,
-          physics: BouncingScrollPhysics(parent: ClampingScrollPhysics()),
-          itemBuilder: (context, index) {
-            double scale = 1 - (0.2 * (currentPage - index).abs()).clamp(0, 1);
-            return Transform.scale(
-              scale: scale,
-              child: CardItem(title: "Event ${index + 1}"),
-            );
-          },
-        ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: 5,
+            physics: BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              double scale =
+                  1 - (0.2 * (currentPage - index).abs()).clamp(0, 1);
+              return Transform.scale(
+                scale: scale,
+                child: CardItem(title: "Event ${index + 1}"),
+              );
+            },
+          ),
+          Positioned(
+            left: 20,
+            child: FloatingActionButton(
+              onPressed: previousPage,
+              mini: true,
+              backgroundColor: Colors.red,
+              child: Icon(Icons.arrow_back, color: Colors.white),
+            ),
+          ),
+          Positioned(
+            right: 20,
+            child: FloatingActionButton(
+              onPressed: nextPage,
+              mini: true,
+              backgroundColor: Colors.red,
+              child: Icon(Icons.arrow_forward, color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -64,9 +99,8 @@ class CardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
       child: Container(
-        height: 400,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -74,23 +108,11 @@ class CardItem extends StatelessWidget {
             BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 2),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text("Details"),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                textStyle: TextStyle(fontSize: 16),
-              ),
-            ),
-          ],
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
