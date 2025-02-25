@@ -26,6 +26,7 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(viewportFraction: 0.7, initialPage: 2);
     _pageController.addListener(() {
       setState(() {
         currentPage = _pageController.page!;
@@ -40,8 +41,8 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
       body: Center(
         child: PageView.builder(
           controller: _pageController,
-          itemCount: 5,
-          physics: BouncingScrollPhysics(),
+          itemCount: 10,
+          physics: BouncingScrollPhysics(parent: ClampingScrollPhysics()),
           itemBuilder: (context, index) {
             double scale = 1 - (0.2 * (currentPage - index).abs()).clamp(0, 1);
             return Transform.scale(
@@ -63,8 +64,9 @@ class CardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       child: Container(
+        height: 400,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -72,11 +74,23 @@ class CardItem extends StatelessWidget {
             BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 2),
           ],
         ),
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text("Details"),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                textStyle: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
         ),
       ),
     );
